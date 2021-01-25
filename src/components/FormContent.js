@@ -26,7 +26,8 @@ const FormContent = ({ handleSubmit, formName, submitValue }) => {
   }, [setInputValue, setIsValid, setValidationMessage]);
 
   return (
-    <form className="form_type_register"
+    <form
+      className="form_type_register"
       action="#"
       name={formName}
       onSubmit={onSubmit}

@@ -35,26 +35,21 @@ function App() {
   const [email, setEmail] = React.useState('');
   const history = useHistory();
 
-  const handleContentGetter = (token) => {
-    return auth.getContent(token)
-      .then((res) => {
-        setEmail(res.email);
-        setLoggedIn(true);
-        history.push('/');
-      })
-  }
-
   const tokenCheck = () => {
     const jwt = getToken();
-    if (!jwt) {
-      return;
+    if (jwt) {
+      auth.getContent(jwt)
+        .then(data => {
+          if (data) {
+            setEmail(data.data.email);
+            setLoggedIn(true);
+            history.push("/");
+          }
+        })
     }
-    handleContentGetter(jwt)
-      .catch((err) => {
-        if (err === 401) {
-          console.log('Произошла ошибка, токен не был передан, был передан не в том формате или не является корректным')
-        }
-      });
+    else {
+      removeToken();
+    }
   }
 
   React.useEffect(() => {
@@ -64,12 +59,11 @@ function App() {
   const onLogin = (email, password) => {
     auth.authorize(email, password)
       .then((data) => {
-        if (!data) {
-          return
-        }
+
         if (data.token) {
-          setToken(data.token);
-          handleContentGetter(data.token)
+          localStorage.setItem('jwt', data.token);
+          history.push("/");
+          setLoggedIn(true);
         }
       })
       .catch((err) => {
@@ -80,6 +74,8 @@ function App() {
         }
       });
   }
+
+
 
   const onRegister = (email, password) => {
     auth.register(email, password)
@@ -238,16 +234,16 @@ function App() {
   return (
     <div className="page">
       <div className="page__cover">
-        <Switch>
-          <CurrentUserContext.Provider value={currentUser}>
-            <Header onSignOut={onSignOut} loggedIn={loggedIn} email={email} />
+        <CurrentUserContext.Provider value={currentUser}>
+          <Header onSignOut={onSignOut} loggedIn={loggedIn} email={email} />
+          <Switch>
             <Route path="/signin">
               <Login onLogin={onLogin} isLoading={isLoading} />
             </Route>
             <Route path="/signup">
               <Register onRegister={onRegister} isLoading={isLoading} />
             </Route>
-            <ProtectedRoute exact path="/" loggedIn="loggedIn">
+            <ProtectedRoute exact path="/" loggedIn={loggedIn}>
               <Main
                 onEditAvatar={handleEditAvatarClick}
                 onEditProfile={handleEditProfileClick}
@@ -257,27 +253,22 @@ function App() {
                 onCardDelete={handleDeletePopupOpenClick}
                 cards={cards}
               />
-              <Footer />
-              <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}
-                onUpdateUser={handleUpdateUser} isLoading={isLoading} />
-
-              <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}
-                onAddPlace={handleAddPlaceSubmit} isLoading={isLoading} />
-
-              <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}
-                onUpdateAvatar={handleUpdateAvatar} isLoading={isLoading} />
-
-              <DeleteConfirmPopup isOpen={isDeletePopupOpen} onClose={closeAllPopups}
-                card={selectedCard} onCardDelete={handleCardDelete} isLoading={isLoading} />
-
-              <ImagePopup isOpen={isImagePopupOpen} onClose={closeAllPopups} card={selectedCard} />
-
             </ProtectedRoute>
-            <Route>
-              {loggedIn ? <Redirect to="/" /> : <Redirect to="/signin" />}
-            </Route>
-          </CurrentUserContext.Provider>
-        </Switch>
+          </Switch>
+          <Footer />
+          <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}
+            onUpdateUser={handleUpdateUser} isLoading={isLoading} />
+          <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}
+            onAddPlace={handleAddPlaceSubmit} isLoading={isLoading} />
+          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}
+            onUpdateAvatar={handleUpdateAvatar} isLoading={isLoading} />
+          <DeleteConfirmPopup isOpen={isDeletePopupOpen} onClose={closeAllPopups}
+            card={selectedCard} onCardDelete={handleCardDelete} isLoading={isLoading} />
+          <ImagePopup isOpen={isImagePopupOpen} onClose={closeAllPopups} card={selectedCard} />
+          <Route>
+            {loggedIn ? <Redirect to="/" /> : <Redirect to="/signin" />}
+          </Route>
+        </CurrentUserContext.Provider>
         <InfoTooltip isRegister={isRegister} isOpen={isTooltipPopupOpen} onClose={closeAllPopups} />
       </div>
     </div>

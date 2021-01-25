@@ -3,7 +3,8 @@ import Popup from "./Popup";
 
 const ImagePopup = ({ card, isOpen, onClose }) => {
   return (
-    <Popup name="picture"
+    <Popup
+      name="picture"
       isOpen={isOpen}
       onClose={onClose}>
       <figure className="popup__figure">

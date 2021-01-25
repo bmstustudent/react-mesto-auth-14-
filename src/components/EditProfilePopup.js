@@ -1,5 +1,5 @@
 import React from "react";
-import Popup from "./Popup";
+import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import useValidation from "../hooks/useValidation";
 
@@ -39,78 +39,73 @@ const EditProfilePopup = ({ isOpen, onClose, onUpdateUser, isLoading }) => {
   }, [currentUser, isOpen, setInputValue, setIsValid, setValidationMessage]);
 
   return (
-    <Popup name="edit" isOpen={isOpen} onClose={onClose}>
-      <h2 className="popup__title">Редактировать профиль</h2>
-      <form
-        className={"popup__form form_type_edit"}
-        action="#"
-        name="edit"
-        onSubmit={handleSubmit}
-        noValidate
-      >
-        <div className="popup__cover">
-          <label className="popup__control">
-            <input
-              className={`${validationMessage.name
-                ? `popup__input popup__input_type_name popup__input_type_error`
-                : `popup__input popup__input_type_name`
-                }`}
-              type="text"
-              name="name"
-              value={inputValue.name}
-              onChange={handleInputChange}
-              placeholder="Имя"
-              minLength="2"
-              maxLength="20"
-              pattern="^[0-9A-Za-zА-Яа-яЁё\D][A-Za-zА-Яа-яЁё\s\D]*[A-Za-zА-Яа-яЁё\D]$"
-              required
-            />
-            <span
-              className={`${isValid.name
-                ? `popup__error`
-                : `popup__error popup__error_type_active`
-                }`}
-            >
-              {validationMessage.name}
-            </span>
-          </label>
-          <label className="popup__control">
-            <input
-              className={`${validationMessage.about
-                ? `popup__input popup__input_type_about popup__input_type_error`
-                : `popup__input popup__input_type_about`
-                }`}
-              type="text"
-              name="about"
-              value={inputValue.about}
-              onChange={handleInputChange}
-              placeholder="Занятие"
-              minLength="2"
-              maxLength="200"
-              pattern="^[A-Za-zА-Яа-яЁё\D][A-Za-zА-Яа-яЁё\s\D]*[A-Za-zА-Яа-яЁё\D]$"
-              required
-            />
-            <span
-              className={`${isValid.about
-                ? `popup__error`
-                : `popup__error popup__error_type_active`
-                }`}
-            >
-              {validationMessage.about}
-            </span>
-          </label>
-        </div>
+    <PopupWithForm
+      name="edit"
+      isOpen={isOpen}
+      onClose={onClose}
+      title='Редактировать профиль'
+      onSubmit={handleSubmit}
+    >
+      <label className="popup__control">
         <input
-          className={`${isValid.name && isValid.about
-            ? `button popup__submit`
-            : `button popup__submit popup__submit_type_disabled`
+          className={`${validationMessage.name
+            ? `popup__input popup__input_type_name popup__input_type_error`
+            : `popup__input popup__input_type_name`
             }`}
-          type="submit"
-          value={`${isLoading ? `Сохранение...` : `Сохранить`}`}
-          name="submit"
+          type="text"
+          name="name"
+          value={inputValue.name}
+          onChange={handleInputChange}
+          placeholder="Имя"
+          minLength="2"
+          maxLength="20"
+          pattern="^[0-9A-Za-zА-Яа-яЁё\D][A-Za-zА-Яа-яЁё\s\D]*[A-Za-zА-Яа-яЁё\D]$"
+          required
         />
-      </form>
-    </Popup>
+        <span
+          className={`${isValid.name
+            ? `popup__error`
+            : `popup__error popup__error_type_active`
+            }`}
+        >
+          {validationMessage.name}
+        </span>
+      </label>
+      <label className="popup__control">
+        <input
+          className={`${validationMessage.about
+            ? `popup__input popup__input_type_about popup__input_type_error`
+            : `popup__input popup__input_type_about`
+            }`}
+          type="text"
+          name="about"
+          value={inputValue.about}
+          onChange={handleInputChange}
+          placeholder="Занятие"
+          minLength="2"
+          maxLength="200"
+          pattern="^[A-Za-zА-Яа-яЁё\D][A-Za-zА-Яа-яЁё\s\D]*[A-Za-zА-Яа-яЁё\D]$"
+          required
+        />
+        <span
+          className={`${isValid.about
+            ? `popup__error`
+            : `popup__error popup__error_type_active`
+            }`}
+        >
+          {validationMessage.about}
+        </span>
+      </label>
+      <input
+        className={`${isValid.name && isValid.about
+          ? `button popup__submit`
+          : `button popup__submit popup__submit_type_disabled`
+          }`}
+        type="submit"
+        value={`${isLoading ? `Сохранение...` : `Сохранить`}`}
+        name="submit"
+      />
+    </PopupWithForm>
   );
 };
 

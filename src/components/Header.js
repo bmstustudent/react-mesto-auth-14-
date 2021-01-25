@@ -2,7 +2,7 @@ import React from "react";
 import logo from '../images/logo.svg';
 import { useHistory, useLocation } from 'react-router-dom';
 
-const Header = ({ onSignOut, loggedIn, email }) => {
+const Header = ({ onSignOut, loggedIn, email, token }) => {
   const location = useLocation();
   const history = useHistory();
   const [open, setOpen] = React.useState(false);
